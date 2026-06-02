@@ -1,22 +1,19 @@
-from flask import Flask, render_template
-from flask import request
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-@app.route('/')
-@app.route('/index')
-def index():
-    return render_template('login.html')
+@app.route('/cadastro', methods=['GET', 'POST'])
+def cadastro():
+    mensagem = ""
 
-@app.route('/autenticar', methods = ['GET'])
-def autenticar():
-    usuario = request.args.gets('usuario')
-    senha = request.args.get('senha')
-    return render_template(
-        'autenticar.html',
-        usuario=usuario,
-        senha=senha
-    )
+    if request.method == 'POST':
+        nome = request.form.get('nome')
+        if not nome:
+            mensagem = "O campo nome é obrigatório!"
+        else:
+            mensagem = f"Cadastro realizado com sucesso! Bem-vindo, {nome}"
+    return render_template('cadastro.html', mensagem=mensagem)
 
- if__name__=='__main__':
-app.run(debug=True)
+
+if __name__ == '_main_':
+    app.run(debug=True)
