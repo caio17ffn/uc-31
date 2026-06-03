@@ -2,18 +2,22 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-@app.route('/cadastro', methods=['GET', 'POST'])
+@app.route('/')
 def cadastro():
-    mensagem = ""
+    return render_template('index.html')
 
-    if request.method == 'POST':
-        nome = request.form.get('nome')
-        if not nome:
-            mensagem = "O campo nome é obrigatório!"
-        else:
-            mensagem = f"Cadastro realizado com sucesso! Bem-vindo, {nome}"
-    return render_template('cadastro.html', mensagem=mensagem)
+@app.route('/validacao', methods=['POST'])
+def validacao():
+    nome = request.form.get('nome', '').strip().title()
+    email = request.form.get('email', '').strip().lower()
+    cidade = request.form.get('cidade', '').strip().title()
 
+    return f"""
+    <h1>Dados cadastrados:</h1>
+    <p>Nome: {nome}</p>
+    <p>Email: {email}</p>
+    <p>Cidade: {cidade}</p>
+    """
 
 if __name__ == '_main_':
     app.run(debug=True)
