@@ -1,0 +1,14 @@
+.claro{
+    background-color: white;
+    color: black;
+}
+
+.escuro{
+    background-color: black;
+    color: white;
+}
+
+body{
+    font-family: Arial;
+    padding: 20px;
+}
