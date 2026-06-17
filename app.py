@@ -1,53 +1,48 @@
- from flask import Flask, render_template, request, redirect, make_response
+from flask import Flask, render_template, request, redirect, session
 
 app = Flask(__name__)
 
-@app.route('/')
+app.secret_key = "123456"
+
+usuario_correto = "admin"
+senha_correta = "123"
+
+@app.route("/")
 def inicio():
-
-    nome = request.cookies.get('nome')
-    email = request.cookies.get('email')
-    tema = request.cookies.get('tema')
-
-    if tema == None:
-        tema = 'claro'
-
-    return render_template('inicio.html',
-                           nome=nome,
-                           email=email,
-                           tema=tema)
+    return render_template("index.html")
 
 
-@app.route('/salvar', methods=['POST'])
-def salvar():
+@app.route("/login", methods=["GET", "POST"])
+def login():
 
-    nome = request.form['nome']
-    email = request.form['email']
+    erro = ""
 
-    resp = make_response(redirect('/'))
+    if request.method == "POST":
+        usuario = request.form["usuario"]
+        senha = request.form["senha"]
 
-    resp.set_cookie('nome', nome)
-    resp.set_cookie('email', email)
+        if usuario == usuario_correto and senha == senha_correta:
+            session["usuario"] = usuario
+            return redirect("/dashboard")
+        else:
+            erro = "Usuario ou senha incorretos"
 
-    return resp
-
-
-@app.route('/claro')
-def claro():
-
-    resp = make_response(redirect('/'))
-    resp.set_cookie('tema', 'claro')
-
-    return resp
+    return render_template("login.html", erro=erro)
 
 
-@app.route('/escuro')
-def escuro():
+@app.route("/dashboard")
+def dashboard():
 
-    resp = make_response(redirect('/'))
-    resp.set_cookie('tema', 'escuro')
+    if "usuario" not in session:
+        return redirect("/login")
 
-    return resp
+    return render_template("dashboard.html", usuario=session["usuario"])
+
+
+@app.route("/logout")
+def logout():
+    session.pop("usuario", None)
+    return redirect("/login")
 
 
 app.run(debug=True)
